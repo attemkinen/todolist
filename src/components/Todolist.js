@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 import { AgGridReact } from 'ag-grid-react'
 import'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-material.css';
@@ -13,16 +13,47 @@ export default function Todolist() {
     priority:''
   });
   const [todos, setTodos] = useState([]);
+  const gridRef = useRef();
 
   const handleAddTodo = () => {
     setTodos([todo, ...todos]);
     setTodo({ description: "", date: "", priority: "" });
   };
 
+  const deleteTodo = () => {
+    if (gridRef.current.getSelectedNodes().length > 0) {
+    setTodos(todos.filter((todo, index) =>
+    index !== gridRef.current.getSelectedNodes()[0].childIndex))
+    }
+    else {
+    alert('No rows selected if you wish to continue SELECT ROW');
+    }
+    }
+
   const columns = [
-    {headername: 'Description', field: 'description', sortable: true },
-    {headername: 'Date', field: 'date', sortable: true},
-    {headername: 'Priority', field: 'priority', sortable: true},
+    {headername: 'Description',
+     field: 'description',
+      sortable: true ,
+       filter: true, 
+       floatingFilter: true,
+        animateRows:true},
+
+    {headername: 'Date',
+     field: 'date',
+      sortable: true,
+       filter: true,
+        floatingFilter: true,
+         animateRows:true},
+
+    {headername: 'Priority',
+     field: 'priority',
+      sortable: true,
+       filter: true,
+        floatingFilter: true,
+         animateRows:true,
+    cellStyle: params => params.value === "High" ? {color: 'red'} : {color: 'black'} 
+
+  },
   ]
 
   return (
@@ -46,10 +77,14 @@ export default function Todolist() {
       
 
       <button onClick={handleAddTodo}>Add Todo</button>
+      <button onClick={deleteTodo}>Delete</button>
 
       <div className="ag-theme-material"
         style={{height: '700px', width: '70%', margin: 'auto'}} >
         <AgGridReact
+        ref ={gridRef}
+        onGridReady={ params => gridRef.current = params.api }
+        rowSelection="single"
         columnDefs={columns}
         rowData={todos}>
         </AgGridReact>
