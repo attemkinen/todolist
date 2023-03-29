@@ -7,6 +7,8 @@ import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs from 'dayjs';
+import 'dayjs/locale/fi';
 
 
 
@@ -15,7 +17,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 export default function Todolist() {
     const [todo, setTodo] = useState({
         description: '',
-        date: '',
+        date: dayjs(new Date()),
         priority: ''
     });
 
@@ -31,11 +33,18 @@ export default function Todolist() {
     ];
 
 
+   
 
-    const addTodo = () => {
-        setTodos([todo, ...todos]);
+    const addTodo = (event) => {
+        event.preventDefault();
+        const newTodo = {...todo, date: todo.date.format("DD.MM.YYYY")};
+        setTodos([...todos, newTodo]);
         setTodo({ description: '', date: '', priority: '' });
     }
+    const handleDateChange = (date) => {
+        
+        setTodo({ ...todo, date: date });
+      }
 
     const deleteTodo = () => {
         if (gridRef.current.getSelectedNodes().length > 0) {
@@ -56,13 +65,12 @@ return (
                     variant="standard"
                     name="desc" value={todo.description}
                     onChange={e => setTodo({ ...todo, description: e.target.value })} />
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}adapterLocale="fi">
                     {<DatePicker
                         label="Date"
                         format="DD-MM-YYYY"
-                        showTime={false}
                         value={todo.date}
-                        onChange={date => setTodo({ ...todo, date })}
+                        onChange={handleDateChange}
                     />}
                 </LocalizationProvider>
                 <TextField

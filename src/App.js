@@ -16,11 +16,11 @@ function App() {
       
       <BrowserRouter>
 <Link to="/">Home</Link>{' '}
-<Link to="/todolist">Todolist</Link>{' '}
+<Link to="/todo">Todolist</Link>{' '}
 
 <Routes>
 <Route exact path="/" element={<Home />} />
-<Route path="/todolist" element={<Todolist/>} />
+<Route path="/todo" element={<Todolist/>} />
 </Routes>
 </BrowserRouter>
 
